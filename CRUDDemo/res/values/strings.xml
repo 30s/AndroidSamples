@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">UsersActivity</string>
+    <string name="add_user">Add User</string>
     <string name="delete_user">Delete User</string>
+    <string name="change_pwd">Change Password</string>
 </resources>
