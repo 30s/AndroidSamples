@@ -5,8 +5,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -37,6 +42,8 @@ public class UsersActivity extends ListActivity {
 				return false;
 			}
 		});
+
+        registerForContextMenu(getListView());
         
         mDBHelper = new DBHelper(getBaseContext());
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
@@ -67,4 +74,24 @@ public class UsersActivity extends ListActivity {
 		Log.d(UsersActivity.class.getName(), 
 				"Click id: " + id + " " + text1.getText() + " " + text2.getText());
 	}
+	
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+	                                ContextMenuInfo menuInfo) {
+	    super.onCreateContextMenu(menu, v, menuInfo);
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.users_context_menu, menu);
+	}
+	
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+	    AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+	    switch (item.getItemId()) {
+	        case R.id.delete_user:
+	            Log.d(UsersActivity.class.getName(), "delete user");
+	            return true;
+	        default:
+	            return super.onContextItemSelected(item);
+	    }
+	}	
 }
