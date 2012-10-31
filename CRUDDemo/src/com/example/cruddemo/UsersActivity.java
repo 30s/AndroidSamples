@@ -1,14 +1,15 @@
 package com.example.cruddemo;
 
 import android.app.ListActivity;
-import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.provider.Contacts.People;
 import android.util.Log;
+import android.view.View;
 import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 
 import com.example.cruddemo.models.DBHelper;
 import com.example.cruddemo.models.User;
@@ -44,4 +45,12 @@ public class UsersActivity extends ListActivity {
          setListAdapter(adapter);
          db.close();
     }
+	
+	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		TextView text1 = (TextView)v.findViewById(android.R.id.text1);
+		TextView text2 = (TextView)v.findViewById(android.R.id.text2);
+		Log.d(UsersActivity.class.getName(), 
+				"id: " + id + " " + text1.getText() + " " + text2.getText());
+	}
 }
