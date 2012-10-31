@@ -23,25 +23,25 @@ public class UsersActivity extends ListActivity {
     {
         super.onCreate(savedInstanceState);
 
-        mCursor = this.getContentResolver().query(People.CONTENT_URI, null, null, null, null);
+        mDBHelper = new DBHelper(getBaseContext());
+        SQLiteDatabase db = mDBHelper.getWritableDatabase();
+        
+		String[] projection = { User.Meta._ID, User.Meta.COLUMN_USERNAME,
+				User.Meta.COLUMN_PASSWORD };
+		String order = User.Meta.COLUMN_USERNAME + " DESC";
+		mCursor = db.query(User.Meta.TABLE_NAME, projection, null, null,
+				null, null, order);
         startManagingCursor(mCursor);
 
         ListAdapter adapter = new SimpleCursorAdapter(
                  this,
                  android.R.layout.two_line_list_item,
                  mCursor,
-                 new String[] {People.NAME, People.NUMBER},
+                 new String[] { User.Meta.COLUMN_USERNAME,
+         				User.Meta.COLUMN_PASSWORD },
                  new int[] {android.R.id.text1, android.R.id.text2});
 
          setListAdapter(adapter);
-         
-         mDBHelper = new DBHelper(getBaseContext());
-         SQLiteDatabase db = mDBHelper.getWritableDatabase();
-         
-         ContentValues values = new ContentValues();
-         values.put(User.Meta.COLUMN_USERNAME, "Bob");
-         values.put(User.Meta.COLUMN_PASSWORD, "bob_pwd");
-         long id = db.insert(User.Meta.TABLE_NAME, null, values);
-         Log.d("UsersActivity", Long.toString(id));
+         db.close();
     }
 }
