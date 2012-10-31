@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -24,6 +25,19 @@ public class UsersActivity extends ListActivity {
     {
         super.onCreate(savedInstanceState);
 
+        getListView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				TextView text1 = (TextView)view.findViewById(android.R.id.text1);
+				TextView text2 = (TextView)view.findViewById(android.R.id.text2);
+				Log.d(UsersActivity.class.getName(), 
+						"LongClick id: " + id + " " + text1.getText() + " " + text2.getText());
+				return false;
+			}
+		});
+        
         mDBHelper = new DBHelper(getBaseContext());
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
         
@@ -51,6 +65,6 @@ public class UsersActivity extends ListActivity {
 		TextView text1 = (TextView)v.findViewById(android.R.id.text1);
 		TextView text2 = (TextView)v.findViewById(android.R.id.text2);
 		Log.d(UsersActivity.class.getName(), 
-				"id: " + id + " " + text1.getText() + " " + text2.getText());
+				"Click id: " + id + " " + text1.getText() + " " + text2.getText());
 	}
 }
