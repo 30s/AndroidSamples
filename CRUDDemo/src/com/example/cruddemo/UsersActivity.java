@@ -46,6 +46,10 @@ public class UsersActivity extends ListActivity {
         registerForContextMenu(getListView());
         
         mDBHelper = new DBHelper(getBaseContext());
+        refresh_list_view();
+    }
+	
+	private void refresh_list_view() {
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
         
 		String[] projection = { User.Meta._ID, User.Meta.COLUMN_USERNAME,
@@ -65,7 +69,7 @@ public class UsersActivity extends ListActivity {
 
          setListAdapter(adapter);
          db.close();
-    }
+	}
 	
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
@@ -94,6 +98,7 @@ public class UsersActivity extends ListActivity {
 	    		SQLiteDatabase db = mDBHelper.getWritableDatabase();
 	    		db.delete(User.Meta.TABLE_NAME, selection, args);
 	    		db.close();
+	    		refresh_list_view();
 	            return true;
 	        default:
 	            return super.onContextItemSelected(item);
