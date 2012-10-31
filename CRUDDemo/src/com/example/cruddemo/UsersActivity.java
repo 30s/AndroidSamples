@@ -87,8 +87,13 @@ public class UsersActivity extends ListActivity {
 	public boolean onContextItemSelected(MenuItem item) {
 	    AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 	    switch (item.getItemId()) {
-	        case R.id.delete_user:
+	        case R.id.delete_user:	        	
 	            Log.d(UsersActivity.class.getName(), "delete user");
+	    		String selection = User.Meta._ID + " = ?";
+	    		String[] args = { String.valueOf(info.id) };
+	    		SQLiteDatabase db = mDBHelper.getWritableDatabase();
+	    		db.delete(User.Meta.TABLE_NAME, selection, args);
+	    		db.close();
 	            return true;
 	        default:
 	            return super.onContextItemSelected(item);
