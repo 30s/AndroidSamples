@@ -1,0 +1,9 @@
+<resources>
+
+    <string name="app_name">SMSDemo</string>
+    <string name="hello_world">Send \"hello world\" to phone 123456</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="btn_send_sms">Send SMS</string>
+
+</resources>
