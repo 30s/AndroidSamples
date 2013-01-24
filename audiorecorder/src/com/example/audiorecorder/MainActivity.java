@@ -231,6 +231,7 @@ public class MainActivity extends Activity implements OnClickListener {
 				if (AudioRecord.ERROR_INVALID_OPERATION != read) {
 					try {
 						os.write(data);
+						prog_volumn.setProgress(data[mBufferSize - 1]);
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
