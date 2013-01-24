@@ -42,4 +42,11 @@
         android:layout_toRightOf="@id/btn_pause"
         android:text="Stop"/>
     
+    <ProgressBar android:id="@+id/prog_volumn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_play"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:indeterminate="false"/>
+    
 </RelativeLayout>
