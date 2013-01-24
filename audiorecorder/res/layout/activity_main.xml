@@ -4,16 +4,42 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity" >
     
+    <TextView android:id="@+id/lbl_audio" 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sound file: /mnt/sdcard/audiorecorder.3gp"/>
+    
     <Button android:id="@+id/btn_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/lbl_audio"
         android:text="Start"/>
     
     <Button android:id="@+id/btn_stop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_toRightOf="@id/btn_start"
+        android:layout_below="@id/lbl_audio"
         android:text="Stop"/>
 
+    <Button android:id="@+id/btn_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_start"
+        android:text="Play"/>
+    
+    <Button android:id="@+id/btn_pause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_start"
+        android:layout_toRightOf="@id/btn_start"
+        android:text="Pause"/>
+    
+    <Button android:id="@+id/btn_stop_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_start"
+        android:layout_toRightOf="@id/btn_pause"
+        android:text="Stop"/>
+    
 </RelativeLayout>
