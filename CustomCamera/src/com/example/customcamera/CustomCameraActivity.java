@@ -12,6 +12,8 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
+import android.media.CamcorderProfile;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -31,6 +33,8 @@ public class CustomCameraActivity extends Activity {
 
 	private Camera mCamera;
 	private CameraPreview mPreview;
+	private MediaRecorder mMediaRecorder;
+	private boolean isRecording = false;
 
 	private PictureCallback mPicture = new PictureCallback() {
 
@@ -56,6 +60,7 @@ public class CustomCameraActivity extends Activity {
 			}
 		}
 	};
+	private Button recordButton;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +83,42 @@ public class CustomCameraActivity extends Activity {
 				mCamera.takePicture(null, null, mPicture);
 			}
 		});
+
+		recordButton = (Button) findViewById(R.id.button_record);
+		recordButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (isRecording) {
+					// stop recording and release camera
+					mMediaRecorder.stop(); // stop the recording
+					releaseMediaRecorder(); // release the MediaRecorder object
+
+					// inform the user that recording has stopped
+					setCaptureButtonText("Recording");
+					isRecording = false;
+				} else {
+					// initialize video camera
+					if (prepareVideoRecorder()) {
+						// Camera is available and unlocked, MediaRecorder is
+						// prepared,
+						// now you can start recording
+						mMediaRecorder.start();
+
+						// inform the user that recording has started
+						setCaptureButtonText("Stop");
+						isRecording = true;
+					} else {
+						// prepare didn't work, release the camera
+						releaseMediaRecorder();
+						// inform user
+					}
+				}
+			}
+		});
+	}
+
+	private void setCaptureButtonText(String string) {
+		recordButton.setText(string);
 	}
 
 	@Override
@@ -151,4 +192,73 @@ public class CustomCameraActivity extends Activity {
 
 		return mediaFile;
 	}
+
+	private boolean prepareVideoRecorder() {
+
+		if (mCamera == null) {
+			mCamera = getCameraInstance();
+		}
+		mMediaRecorder = new MediaRecorder();
+
+		// Step 1: Unlock and set camera to MediaRecorder
+		mCamera.unlock();
+		mMediaRecorder.setCamera(mCamera);
+
+		// Step 2: Set sources
+		mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
+		mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
+
+		// Step 3: Set a CamcorderProfile (requires API Level 8 or higher)
+		mMediaRecorder.setProfile(CamcorderProfile
+				.get(CamcorderProfile.QUALITY_LOW));
+		mMediaRecorder.setVideoFrameRate(10);
+
+		// Step 4: Set output file
+		mMediaRecorder.setOutputFile(getOutputMediaFile(MEDIA_TYPE_VIDEO)
+				.toString());
+
+		// Step 5: Set the preview output
+		mMediaRecorder.setPreviewDisplay(mPreview.getHolder().getSurface());
+
+		// Step 6: Prepare configured MediaRecorder
+		try {
+			mMediaRecorder.prepare();
+		} catch (IllegalStateException e) {
+			Log.d(TAG,
+					"IllegalStateException preparing MediaRecorder: "
+							+ e.getMessage());
+			releaseMediaRecorder();
+			return false;
+		} catch (IOException e) {
+			Log.d(TAG, "IOException preparing MediaRecorder: " + e.getMessage());
+			releaseMediaRecorder();
+			return false;
+		}
+		return true;
+	}
+
+	private void releaseMediaRecorder() {
+		if (mMediaRecorder != null) {
+			mMediaRecorder.reset(); // clear recorder configuration
+			mMediaRecorder.release(); // release the recorder object
+			mMediaRecorder = null;
+			mCamera.lock(); // lock camera for later use
+		}
+	}
+
+	private void releaseCamera() {
+		if (mCamera != null) {
+			mCamera.release(); // release the camera for other applications
+			mCamera = null;
+		}
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		releaseMediaRecorder(); // if you are using MediaRecorder, release it
+								// first
+		releaseCamera(); // release the camera immediately on pause event
+	}
+
 }
