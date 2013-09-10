@@ -92,12 +92,14 @@ public class CustomCameraActivity extends Activity {
 					// stop recording and release camera
 					mMediaRecorder.stop(); // stop the recording
 					releaseMediaRecorder(); // release the MediaRecorder object
+					mCamera.startPreview();
 
 					// inform the user that recording has stopped
-					setCaptureButtonText("Recording");
+					setCaptureButtonText("Record");
 					isRecording = false;
 				} else {
 					// initialize video camera
+					mCamera.stopPreview();
 					if (prepareVideoRecorder()) {
 						// Camera is available and unlocked, MediaRecorder is
 						// prepared,
@@ -110,6 +112,7 @@ public class CustomCameraActivity extends Activity {
 					} else {
 						// prepare didn't work, release the camera
 						releaseMediaRecorder();
+						mCamera.startPreview();
 						// inform user
 					}
 				}
