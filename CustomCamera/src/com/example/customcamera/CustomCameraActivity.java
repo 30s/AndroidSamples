@@ -91,15 +91,16 @@ public class CustomCameraActivity extends Activity {
 				if (isRecording) {
 					// stop recording and release camera
 					mMediaRecorder.stop(); // stop the recording
-					releaseMediaRecorder(); // release the MediaRecorder object
-					mCamera.startPreview();
-
+					releaseMediaRecorder(); // release the MediaRecorder
+											// object
+					mPreview.setMode(CameraPreview.MODE_PICTURE);
+					
 					// inform the user that recording has stopped
 					setCaptureButtonText("Record");
 					isRecording = false;
 				} else {
 					// initialize video camera
-					mCamera.stopPreview();
+					mPreview.setMode(CameraPreview.MODE_VIDEO);
 					if (prepareVideoRecorder()) {
 						// Camera is available and unlocked, MediaRecorder is
 						// prepared,
@@ -112,7 +113,7 @@ public class CustomCameraActivity extends Activity {
 					} else {
 						// prepare didn't work, release the camera
 						releaseMediaRecorder();
-						mCamera.startPreview();
+						mPreview.setMode(CameraPreview.MODE_PICTURE);
 						// inform user
 					}
 				}
@@ -197,6 +198,7 @@ public class CustomCameraActivity extends Activity {
 	}
 
 	private boolean prepareVideoRecorder() {
+		Log.d(TAG, "prepare video recorder");
 
 		if (mCamera == null) {
 			mCamera = getCameraInstance();
@@ -219,6 +221,7 @@ public class CustomCameraActivity extends Activity {
 		// Step 4: Set output file
 		mMediaRecorder.setOutputFile(getOutputMediaFile(MEDIA_TYPE_VIDEO)
 				.toString());
+		mMediaRecorder.setMaxFileSize(1024 * 1024); // 1M
 
 		// Step 5: Set the preview output
 		mMediaRecorder.setPreviewDisplay(mPreview.getHolder().getSurface());
