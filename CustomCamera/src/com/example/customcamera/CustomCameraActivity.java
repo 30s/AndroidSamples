@@ -94,7 +94,7 @@ public class CustomCameraActivity extends Activity {
 					releaseMediaRecorder(); // release the MediaRecorder
 											// object
 					mPreview.setMode(CameraPreview.MODE_PICTURE);
-					
+
 					// inform the user that recording has stopped
 					setCaptureButtonText("Record");
 					isRecording = false;
@@ -214,8 +214,18 @@ public class CustomCameraActivity extends Activity {
 		mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
 
 		// Step 3: Set a CamcorderProfile (requires API Level 8 or higher)
-		mMediaRecorder.setProfile(CamcorderProfile
-				.get(CamcorderProfile.QUALITY_LOW));
+		CamcorderProfile cp = CamcorderProfile
+				.get(CamcorderProfile.QUALITY_LOW);
+		try {
+			CamcorderProfile cp480 = CamcorderProfile
+					.get(CamcorderProfile.QUALITY_480P);
+			if (cp480 != null) {
+				cp = cp480;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		mMediaRecorder.setProfile(cp);
 		mMediaRecorder.setVideoFrameRate(10);
 
 		// Step 4: Set output file
