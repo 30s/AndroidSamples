@@ -226,7 +226,7 @@ public class CustomCameraActivity extends Activity {
 			e.printStackTrace();
 		}
 		mMediaRecorder.setProfile(cp);
-		mMediaRecorder.setVideoFrameRate(10);
+		// mMediaRecorder.setVideoFrameRate(10);
 
 		// Step 4: Set output file
 		mMediaRecorder.setOutputFile(getOutputMediaFile(MEDIA_TYPE_VIDEO)
