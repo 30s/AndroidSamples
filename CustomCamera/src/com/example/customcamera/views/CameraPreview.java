@@ -8,6 +8,9 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.example.customcamera.CustomCameraActivity;
+import com.example.customcamera.CustomCameraActivity.CustomCameraHandler;
+
 /** A basic Camera preview class */
 public class CameraPreview extends SurfaceView implements
 		SurfaceHolder.Callback {
@@ -17,6 +20,7 @@ public class CameraPreview extends SurfaceView implements
 	private SurfaceHolder mHolder;
 	private Camera mCamera;
 	private int mMode;
+	private CustomCameraHandler mCCHandler;
 
 	public CameraPreview(Context context, Camera camera) {
 		super(context);
@@ -79,7 +83,8 @@ public class CameraPreview extends SurfaceView implements
 				mCamera.setPreviewDisplay(mHolder);
 				mCamera.startPreview();
 			}
-
+			Log.d("cc", "send resize message");
+			mCCHandler.sendEmptyMessage(CustomCameraActivity.RESIZE_PREVIEW);
 		} catch (Exception e) {
 			Log.d(TAG, "Error starting camera preview: " + e.getMessage());
 		}
@@ -87,5 +92,9 @@ public class CameraPreview extends SurfaceView implements
 
 	public void setMode(int mode) {
 		mMode = mode;
+	}
+
+	public void setHandler(CustomCameraHandler ccHandler) {
+		mCCHandler = ccHandler;
 	}
 }

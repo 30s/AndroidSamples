@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import android.app.Activity;
@@ -17,12 +19,16 @@ import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
+import com.example.customcamera.utils.Utils;
 import com.example.customcamera.views.CameraPreview;
 
 public class CustomCameraActivity extends Activity {
@@ -30,11 +36,16 @@ public class CustomCameraActivity extends Activity {
 	protected static final String TAG = "CustomCameraActivity";
 	public static final int MEDIA_TYPE_IMAGE = 1;
 	public static final int MEDIA_TYPE_VIDEO = 2;
+	
+	public static final int RESIZE_PREVIEW = 1;
 
 	private Camera mCamera;
 	private CameraPreview mPreview;
 	private MediaRecorder mMediaRecorder;
 	private boolean isRecording = false;
+	private Button recordButton;
+	private FrameLayout preview;
+	private CustomCameraHandler ccHandler;
 
 	private PictureCallback mPicture = new PictureCallback() {
 
@@ -60,19 +71,43 @@ public class CustomCameraActivity extends Activity {
 			}
 		}
 	};
-	private Button recordButton;
-	private FrameLayout preview;
+
+	public class CustomCameraHandler extends Handler {
+		private final WeakReference<CustomCameraActivity> mActivity;
+		
+		public CustomCameraHandler(CustomCameraActivity activity) {
+			mActivity = new WeakReference<CustomCameraActivity>(activity);
+		}
+
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			CustomCameraActivity activity = mActivity.get();
+			if (activity == null) {
+				return;
+			}
+			
+			switch (msg.what) {
+			case RESIZE_PREVIEW:
+				ArrayList<Integer> size = Utils.getVideoFrameSize();
+				activity.setPreviewSize(size.get(0), size.get(1));
+				break;
+			} 
+		}
+	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_custom_camera);
 
+		ccHandler = new CustomCameraHandler(this);
 		// Create an instance of Camera
 		mCamera = getCameraInstance();
 
 		// Create our Preview view and set it as the content of our activity.
 		mPreview = new CameraPreview(this, mCamera);
+		mPreview.setHandler(ccHandler);
 		preview = (FrameLayout) findViewById(R.id.camera_preview);
 		preview.addView(mPreview);
 
@@ -122,12 +157,11 @@ public class CustomCameraActivity extends Activity {
 		});
 	}
 
-	private void setPreviewSize(int width, int height) {
-		Log.d("cc", "preview width: " + preview.getWidth());
-		Log.d("cc", "preview height: " + preview.getHeight());
+	public void setPreviewSize(int width, int height) {
+		preview.setLayoutParams(new LinearLayout.LayoutParams(preview
+				.getHeight() * width / height, preview.getHeight()));
 	}
 
-	
 	private void setCaptureButtonText(String string) {
 		recordButton.setText(string);
 	}
