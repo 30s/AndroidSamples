@@ -61,7 +61,8 @@ public class CustomCameraActivity extends Activity {
 		}
 	};
 	private Button recordButton;
-
+	private FrameLayout preview;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -72,7 +73,7 @@ public class CustomCameraActivity extends Activity {
 
 		// Create our Preview view and set it as the content of our activity.
 		mPreview = new CameraPreview(this, mCamera);
-		FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+		preview = (FrameLayout) findViewById(R.id.camera_preview);
 		preview.addView(mPreview);
 
 		Button captureButton = (Button) findViewById(R.id.button_capture);
@@ -121,6 +122,12 @@ public class CustomCameraActivity extends Activity {
 		});
 	}
 
+	private void setPreviewSize(int width, int height) {
+		Log.d("cc", "preview width: " + preview.getWidth());
+		Log.d("cc", "preview height: " + preview.getHeight());
+	}
+
+	
 	private void setCaptureButtonText(String string) {
 		recordButton.setText(string);
 	}
@@ -225,6 +232,9 @@ public class CustomCameraActivity extends Activity {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		Log.d("cc", "width: " + cp.videoFrameWidth);
+		Log.d("cc", "height: " + cp.videoFrameHeight);
+		setPreviewSize(cp.videoFrameWidth, cp.videoFrameHeight);
 		mMediaRecorder.setProfile(cp);
 		// mMediaRecorder.setVideoFrameRate(10);
 
